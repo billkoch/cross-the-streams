@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cross-the-streams
+  labels:
+    app: cross-the-streams
+spec:
+  replicas: 3
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: cross-the-streams
+  template:
+    metadata:
+      labels:
+        app: cross-the-streams
+    spec:
+      terminationGracePeriodSeconds: 300 # 5 minutes
+      containers:
+        - name: cross-the-streams
+          image: cross-the-streams:0.0.1
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
