@@ -21,6 +21,17 @@ spec:
           image: cross-the-streams:0.0.1
           ports:
             - containerPort: 8080
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 20"]
+          env:
+            - name: DOWNTIME
+              value: "Nope! :)"
+            - name: SERVER_SHUTDOWN
+              value: graceful
+            - name: SPRING_LIFECYCLE_TIMEOUTPERSHUTDOWNPHASE
+              value: 20s
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
